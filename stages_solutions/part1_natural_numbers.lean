@@ -36,8 +36,8 @@ def twice (f : N -> N) (n : N) : N :=
 
 #check (twice)
 
--- Function parameters don't have to be declared in the type signature
--- We can use the "fun" keyword to create a lambda abstraction (anonymous function)
+-- Parameters don't have to be named before the colon:
+-- we can move them into the type and bind them with "fun" (a lambda abstraction / anonymous function)
 def twice' (f : N -> N) : N -> N :=
   fun n => f (f n)
 
