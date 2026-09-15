@@ -44,7 +44,7 @@
 #show emph: it => text(fill: red, style: "italic", it.body)
 
 
-== What is LEAN?
+== What is L$exists$$forall$N?
 
 #slide(repeat: 3, self => [
   #let (uncover, only) = utils.methods(self)
@@ -52,7 +52,7 @@
   #v(2em)
   #uncover("1-")[
     Lean is...
-    - a _functional programming language_:
+    - a _functional programming language_
   ]
   #uncover("2-")[
     - _dependently typed_
@@ -66,7 +66,7 @@
 ])
 
 
-== Lean is a functional programming language
+== L$exists$$forall$N is a functional programming language
 
 #slide(repeat: 3, self => [
   #let (uncover, only) = utils.methods(self)
@@ -75,10 +75,13 @@
   #uncover("1-")[
     - everything is an expression
     - functions are values 
-    - functions are _pure_ (no side-effects)
+    - functions are _pure_
     - inductive types, pattern matching, lambda abstraction
     - functions regulate everything
-    - most prominent example: Haskell
+
+
+    - *Upside:* Allows for clean mathematical reasoning and Proofs
+    - *Downside:* Slow for many tasks, I/O is awkward
     
   ]
   
@@ -92,7 +95,7 @@
 
 ])
 
-== Lean dependently typed
+== L$exists$$forall$N is dependently typed
 
 #slide(repeat: 3, self => [
   #let (uncover, only) = utils.methods(self)
@@ -100,10 +103,31 @@
   #v(0.5em)
   #uncover("1-")[
     - every object has a type
-    - type-correctness of functions is checked at compile-time
+    - type-correctness is checked at compile-time
     - _types are themselves values_ (types are first-class citizens)
     - types can _depend_ on values
     - types themselves can do computation
+    
+  ]
+  
+  #uncover("2-")[
+    *blah:* \
+  ]
+
+  #uncover("3-")[
+    *blah:* \
+  ]
+
+])
+
+== Lean is a theorem prover
+
+#slide(repeat: 3, self => [
+  #let (uncover, only) = utils.methods(self)
+
+  #v(0.5em)
+  #uncover("1-")[
+    - 
     
   ]
   

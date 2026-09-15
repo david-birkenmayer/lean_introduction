@@ -20,8 +20,8 @@ open N
 
 def double (n : N) : N :=
   match n with
-  | zero => _
-  | succ n => _
+  | zero => zero
+  | succ n => succ (succ (double n))
 
 -- #reduce evaluates an expression
 #reduce double (succ (succ zero))
@@ -31,7 +31,7 @@ def double (n : N) : N :=
 -- Exercise: define twice, which applies f two times to n
 
 def twice (f : N -> N) (n : N) : N :=
-  _
+  f (f n)
 
 -- Currying: guess the types first, then check!
 #check (twice)
@@ -51,12 +51,12 @@ inductive Even : N -> Prop where
 open Even
 
 theorem two_is_even : Even (succ (succ zero)) :=
-  _
+  next_even zero_even
 
 theorem double_is_even (n : N) : Even (double n) :=
   match n with
-  | zero => _
-  | succ n => _
+  | zero => zero_even
+  | succ n => next_even (double_is_even n)
 
 
 -- Equality on Natural numbers --
@@ -69,18 +69,18 @@ infix:20 (priority := high) " ≡ " => NEqual
 
 theorem reflexive {n : N} : n ≡ n :=
   match n with
-  | zero => _
-  | succ n => _
+  | zero => base
+  | succ n => step (reflexive)
 
 theorem symmetric {n m : N} (p: n ≡ m) : m ≡ n :=
   match p with
-  | base   => _
-  | step p (n:=n) (m:=m) => _
+  | base   => reflexive
+  | step p (n:=n) (m:=m) => step (symmetric p)
 
 theorem transitive {n m k : N} (p : n ≡ m) (q : m ≡ k) : n ≡ k :=
   match p, q with
-  | base, base => _
-  | step (n:=n) (m:=m) p, step (m := k) q => _
+  | base, base => reflexive
+  | step (n:=n) (m:=m) p, step (m := k) q => step (transitive p q)
 
 
 -- Addition --
