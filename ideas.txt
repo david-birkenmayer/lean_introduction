@@ -1,0 +1,26 @@
+- Code is checked by a small Core Lean Kernel
+- Axiomatic groundrules: Calculus of Constructions
+  -> powerful enough to encode ZFC
+  -> simple to interact and calculate with
+  -> By default constructive
+- types are extremely expressive, e.g. sorted list type
+- types all the way down! => Universes
+- inductive types, quotient types
+
+- functions can be _dependent_
+- functions must terminate, given termination rules (well-defined recursion)
+
+- definitional equality, propositional equality
+- existensionality and axiom of excluded middle
+
+- Prop type, proof irrelevance, in theory not needed for a theorem prover?
+- and, or, not
+- quantifiers
+- equality
+
+- implicit arguments
+
+
+
+Start with functional programming.
+
