@@ -20,7 +20,7 @@ not in a local checkout.
 | Path | What it is |
 | --- | --- |
 | `interactive/part{1..4}_*.lean` | **The current exercise files.** One per stage, handed out in order. |
-| `solutions/part{1..4}_*.lean` | Intended to be the filled-in twin of each `interactive/` file. |
+| `interactive_sol/part{1..4}_*.lean` | The filled-in twin of each `interactive/` file — same text, holes filled. Keep them diff-identical apart from the hole lines. |
 | `interactive.lean`, `interactive_solutions.lean` | The **original single-file version**, superseded by `interactive/`. Kept as reference — `interactive_solutions.lean` is the only place where *all* proofs (incl. `commutative`) are actually solved. |
 | `presentation/main.typ` | The slide deck (Typst + Touying). Still largely a skeleton with `*blah:*` placeholders. |
 | `presentation/university.typ`, `template.typ` | RPTU-branded Touying theme by Fabian von der Warth; `template.typ` is his original deck kept as a usage example. Treat both as vendored — edit `main.typ`. |
@@ -41,6 +41,8 @@ with `commutative` as the "final boss"**.
   "don't know how to synthesize placeholder" and shows the **expected type and
   local context in the Infoview**, which is exactly the pedagogical point.
   A file with unsolved exercises is *supposed* to show errors.
+- Say **term**, never "expression" — Lean's own name for this style is
+  *term mode*, and the course teaches it by that name.
 - ASCII arrows `->`, not `→`. `succ (succ zero)`, not numerals.
 - `set_option pp.fieldNotation false` at the top of every file, so the Infoview
   prints `succ (succ zero)` instead of `zero.succ.succ`.
@@ -58,21 +60,30 @@ with `commutative` as the "final boss"**.
 Worth confirming with the user before "fixing" any of these — several are just
 mid-migration:
 
-- `interactive/` and `solutions/` are **untracked**; git still has the old names
-  `stages/` and `stages_solutions/` staged as deleted. The rename is uncommitted.
-- **`solutions/` is stale.** Only `part1` matches its `interactive/` twin. `part2`,
-  `part3` and `part4` are copies of the old monolithic `interactive.lean` cut at
-  successive points — each one solves the *previous* part and leaves its own part
-  as `_`. They are effectively another copy of the exercise files, not solutions.
+- `interactive_sol/` is **untracked**, and git still has `solutions/` staged as
+  deleted (that directory was renamed). Uncommitted.
+- **`interactive_sol/` is stale for parts 2–4.** `part1` is a true twin of its
+  exercise file (verified: 0 errors, diff is only the hole lines). `part2`,
+  `part3` and `part4` are still copies of the old monolithic `interactive.lean`
+  cut at successive points — each solves the *previous* part and leaves its own
+  part as `_`, so they are extra exercise files, not solutions.
 - `interactive/part4_addition.lean` has a header typo: `Part 3: Addition`.
 - `main.typ` slides 2–4 end in `*blah:*` placeholder overlays.
 
 ## Building
 
-**Lean:** there is no `lakefile` and no `elan`/`lean` on this machine — the Lean
-files **cannot be typechecked locally**. `lean-toolchain` pins
-`leanprover/lean4:v4.34.0` only to record the version the web editor should match.
-When changing Lean code, reason it through carefully; you cannot compile to check.
+**Lean:** elan is installed at `~/.elan/bin` with `leanprover/lean4:v4.34.0`,
+matching `lean-toolchain`. It is on `PATH` only for *login* shells (added by
+`~/.profile`), so in a non-login shell prefix commands with:
+
+```bash
+export PATH="$HOME/.elan/bin:$PATH"
+```
+
+There is no `lakefile`, but none is needed — the files have no imports, so
+`lean interactive/part1_natural_numbers.lean` typechecks a file directly.
+**Always typecheck Lean changes before reporting them.** Note that exercise files
+are *expected* to error on their `_` holes; compare against the solution instead.
 
 **Slides:** `typst` is installed. Fonts are bundled next to the deck, so:
 

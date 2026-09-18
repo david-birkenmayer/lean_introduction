@@ -7,8 +7,8 @@ inductive N where
   | succ : N -> N
 open N
 
--- Every expression has a type. Put your cursor on a #check line and look at the Infoview.
--- (Parentheses make #check show the type of an expression instead of a definition's signature.)
+-- Every term has a type. Put your cursor on a #check line and look at the Infoview.
+-- (Parentheses make #check show the type of a term instead of a definition's signature.)
 #check (zero)
 #check (succ)
 #check succ (succ zero)
@@ -23,7 +23,7 @@ def double (n : N) : N :=
   | zero => _
   | succ n => _
 
--- #reduce evaluates an expression
+-- #reduce evaluates a term
 #reduce double (succ (succ zero))
 
 

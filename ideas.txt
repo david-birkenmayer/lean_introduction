@@ -24,3 +24,13 @@
 
 Start with functional programming.
 
+    - programs are constructed by applying and composing functions:
+      In contrast to 
+    - functions are values 
+    - functions are _pure_
+    - inductive types, pattern matching, lambda abstraction
+    - functions regulate everything
+
+
+    - *Upside:* Allows for clean mathematical reasoning and Proofs
+    - *Downside:* Slow for many tasks, I/O is awkward
