@@ -1,8 +1,9 @@
 set_option pp.fieldNotation false -- option which makes terms easier to read
 
-
-------  Part 1:  -------------
-------  Natural Numbers ------
+----------------------------------------------------------------------------------
+-- Part 1: Natural Numbers.
+-- introducing: Functional Programming and Static Typing
+----------------------------------------------------------------------------------
 
 
 inductive N where

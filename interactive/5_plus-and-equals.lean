@@ -1,5 +1,11 @@
 set_option pp.fieldNotation false           -- print succ (succ zero) instead of zero.succ.succ
 
+----------------------------------------------------------------------------------
+-- Part 4: + and =.
+-- introducing: Equality and Tactics
+----------------------------------------------------------------------------------
+
+
 inductive N where
   | zero : N
   | succ : N -> N
