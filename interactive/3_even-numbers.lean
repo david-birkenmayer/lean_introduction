@@ -13,14 +13,14 @@ def double (n : N) : N :=
 
 ----------------------------------------------------------------------------------
 -- Part 3: **Even Numbers.**
--- introducing: **Propositions and Logic**
+-- introducing: **Propositions**
 ----------------------------------------------------------------------------------
 
 
--- The Proposition type "Prop"
--- A proposition is either True or False:
-#check True -- True is a type with one element
-#check False -- False is a type with zero elements
+-- The Proposition type "Prop": A proposition is either True or False:
+#check Prop
+#print True -- True is a type with one element
+#print False -- False is a type with zero elements
 
 -- "Is n even?" is a proposition.
 inductive Even : N -> Prop where
