@@ -1,25 +1,25 @@
-set_option pp.fieldNotation false -- option which makes terms easier to read
+set_option pp.fieldNotation false -- makes terms easier to read
+
 
 ----------------------------------------------------------------------------------
--- Part 1: Natural Numbers.
--- introducing: Functional Programming and Static Typing
+-- **Part 1: Natural Numbers**
 ----------------------------------------------------------------------------------
 
-
+-- 'inductive' defines the inductive datatype N
 inductive N where
   | zero : N
   | succ : N → N
 
--- **Hover #-Keywords with the cursor, or look at the "Messages" tab in the InfoView to the right**
+-- **Click on the #-Keywords with the cursor, and look at the "Messages" tab in the InfoView on the right**
 
 #print N  -- *#print shows all the properties that 'N' has
 
 open N  -- allows us to access 'N.zero' and 'N.succ' as 'zero' and 'succ'
 
-#check zero --check shows the type of a term →
+#check zero -- check shows the type of a term
 #check succ
-#check succ (succ zero)  -- application is denoted with a space: f x, not f(x).
-                         -- It associates to the left, so *f x y* means *(f x) y*
+#check succ (succ zero)  -- function application is denoted with a space: f x, not f(x). It associates to the left
+#check N  -- 'Type' is the "type of small types", like 'Int', 'Bool', 'N', etc.
 
 -- **Define a function which adds two to a number**
 def add2 : N → N :=
@@ -39,7 +39,7 @@ def add2' (n : N) : N :=
 
 -- **Define double, a function which multiplies the input by two**
 -- Functions are often defined by pattern matching and recursion.
--- You are allowed to use *double n'* in the recursive case
+-- A natural number is, by definition, either zero or the successor of another natural number n'
 def double (n : N) : N :=
   match n with
   | zero => _
@@ -59,8 +59,7 @@ def twice (f : N → N) (n : N) : N :=
 -- Currying: If we don't supply all arguments, we get another function
 #check twice double
 
--- **Guess the result without looking!**
+-- **Guess the result without looking**
 #reduce twice double (succ zero)
 #reduce twice succ zero
-#reduce twice (fun n => double (succ n)) zero
 #reduce twice (twice double) (succ zero)

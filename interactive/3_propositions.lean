@@ -5,23 +5,33 @@ inductive N where
   | succ : N -> N
 open N
 
+def double (n : N) : N :=
+  match n with
+  | zero => zero
+  | succ n' => succ (succ (double n'))
+
 inductive Even : N -> Prop where
-  | zero_even : Even zero                                  -- zero is an even number
-  | next_even {n : N} (p : Even n) : Even (succ (succ n))  -- if n is even, so is n+2
+  | base : Even zero
+  | next {n : N} : Even n → Even (succ (succ n))
 open Even
 
 
 ----------------------------------------------------------------------------------
--- Part 4: **Logic**
--- introducing: **Curry-Howard Correspondence**
+-- **Part 3: Logic**
 ----------------------------------------------------------------------------------
 
+-- Lean seperates propositions into the 'Prop' Type, which contains True and False
+#print True  -- True is a Type with *one element*
+#print False  -- False is a Type with *no elements*
+
+-- When defining functions with output type 'Prop', we write *theorem* instead of 'def'
+theorem double_even (n : N) : Even (double n) :=
+  match n with
+  | zero => base
+  | succ n' => next (double_even n')
 
 -- Using ⟶ and False, we can define all logical connectives:
 -- ¬ P     := P → False
--- P ∨ Q   := (P → Q) → Q
--- P ∧ Q   := ¬ (¬ P ∧ ¬ Q)
--- P ↔ Q   := (P → Q) ∧ (Q → P)
 
 
 -- In practice only the first relation for negation is used.
