@@ -57,7 +57,7 @@ theorem associativity (n m k : N) : (n + m) + k = n + (m + k) :=
   | succ n' => succ_equal (associativity n' m k)
 
 
--- Final Boss --
+-- **final Boss**
 
 theorem commutative (n m : N) : n + m = m + n :=  -- Hint: You need to define a helper-theorem to solve this one
   match n with
