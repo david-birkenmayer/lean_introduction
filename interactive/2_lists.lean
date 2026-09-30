@@ -10,23 +10,17 @@ open N
 -- introducing: Dependent Types and Implicit Arguments
 ----------------------------------------------------------------------------------
 
--- The Type hierarchy: Turtles all the way down!
-#check N
-#check Type
-#check Type 1
-#check N → Type 2
-
--- Dependent Typing: A type which depends on another type
-inductive Lst (α : Type) : Type
-  | nil : Lst α
-  | cons (x : α) (xs : Lst α) : Lst α
+-- List is a _function of types_
+inductive Lst : Type → Type
+  | nil {α} : Lst α
+  | cons {α} (x : α) (xs : Lst α) : Lst α
 open Lst
-infixr:20 (priority := high) " ∷ " => cons
--- An infix operator to abbreviate "cons". Made with "\::"
+infixr:20 (priority := high) " ∷ " => cons  -- An infix operator to abbreviate "cons". Made with "\::"
 
+-- Notice: The Lean Compiler can infer the implicit type α!
 #check zero ∷ succ zero ∷ nil -- A list of natural numbers
 #check (zero ∷ succ zero ∷ nil) ∷ (nil) ∷ nil -- A list of lists
--- Notice: The Lean Compiler can infer the type α!
+
 
 -- Define a function which concatenates two lists together
 def concatenate {α : Type} (xs : Lst α) (ys : Lst α) : Lst α := -- α is an implicit argument
@@ -36,13 +30,12 @@ def concatenate {α : Type} (xs : Lst α) (ys : Lst α) : Lst α := -- α is an 
 
 
 -- We can also make types which depend on values!
--- A vector is a list of a fixed size n of type N
-inductive Vec (α : Type): N → Type
-  | nul : Vec α zero
-  | consV {n : N} (x : α) (xV : Vec α n) : Vec α (succ n)
+inductive Vec : Type → N → Type
+  | nilV {α} : Vec α zero
+  | consV {α} {n : N} (x : α) (xV : Vec α n) : Vec α (succ n)
 open Vec
 infixr:20 (priority := high) " • " => consV
 -- An infix operator to abbreviate "consV". Made with "\bu"
 
-#check zero • nul
-#check zero • succ zero • zero • nul
+#check zero • nilV
+#check zero • succ zero • zero • nilV
