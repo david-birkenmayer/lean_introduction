@@ -10,7 +10,6 @@ def double (n : N) : N :=
   | zero => zero
   | succ n' => succ (succ (double n'))
 
-
 ----------------------------------------------------------------------------------
 -- **Part 2a: Lists**
 ----------------------------------------------------------------------------------
@@ -31,7 +30,6 @@ def concatenate {T : Type} (xs : Lst T) (ys : Lst T) : Lst T := -- T is an impli
   match xs with
   | nil => _
   | x ∷ xs' => _
-
 
 ----------------------------------------------------------------------------------
 -- **Part 2b: Even Numbers**
@@ -56,3 +54,4 @@ def double_even (n : N) : Even (double n) :=
   match n with
   | zero => _
   | succ n' => _
+-- hint: Substitute the definition of double

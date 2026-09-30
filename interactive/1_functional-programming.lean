@@ -1,6 +1,5 @@
 set_option pp.fieldNotation false -- makes terms easier to read
 
-
 ----------------------------------------------------------------------------------
 -- **Part 1: Natural Numbers**
 ----------------------------------------------------------------------------------
@@ -35,7 +34,6 @@ def add2' (n : N) : N :=
 
 #check (add2')
 #check add2'  -- without brackets, Lean will show n explicitly. This will be important later.
-
 
 -- **Define double, a function which multiplies the input by two**
 -- Functions are often defined by pattern matching and recursion.
