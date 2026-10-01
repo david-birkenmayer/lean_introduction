@@ -1,5 +1,5 @@
-set_option pp.fieldNotation false  -- makes terms easier to read
 namespace MyLogic -- A namespace so the standard functions can be overwritten
+set_option pp.fieldNotation false  -- makes terms easier to read
 
 inductive N where
   | zero : N
@@ -44,22 +44,10 @@ theorem double_even (n : N) : Even (double n) :=
 def Not (P : Prop) : Prop := P → False
 notation:max (priority := high) "¬" p:40 => Not p  -- This symbol can be made with \neg
 
--- *Prove that one is not even*
+-- One is not even
 theorem one_is_not_even : ¬ Even (succ zero) :=
   fun s => nomatch s
 -- the compiler can deduce that there is no combination of 'base' and 'next' that produces s.
-
--- *Show that, from falsity, anything can be proven*
-theorem ex_falso_quodlibet {P : Prop} (s : False) : P :=
-  nomatch s
-
--- A more sophisticated negation proof.
-theorem succ_even_is_not_even {n : N} (h : Even n) : ¬ Even (succ n) :=
-  fun s =>
-  match h, s with
-  | next h', next s' => succ_even_is_not_even h' s'
--- We have to provide a way of reducing to a impossible case.
--- The compiler rules out the other cases.
 
 ----------------------------------------------------------------------------------
 -- **Part 3c: Logical connectives**
@@ -85,7 +73,7 @@ inductive Iff (P Q : Prop) : Prop where  -- This symbol can be made with \iff
 infix:20 (priority := high) " ↔ " => Iff
 
 -- I let the RPTU LLM generate this proof for me!
-theorem and_assumption {P Q R : Prop} (h : (P → R) ∨ (Q → R)) : (P ∧ Q) → R :=
+theorem and_imp_of_or_imp {P Q R : Prop} (h : (P → R) ∨ (Q → R)) : (P ∧ Q) → R :=
   fun pq =>
   match h, pq with
   | Or.inl f, And.intro p _ => f p
@@ -96,23 +84,37 @@ theorem and_assumption {P Q R : Prop} (h : (P → R) ∨ (Q → R)) : (P ∧ Q) 
 ----------------------------------------------------------------------------------
 
 --*FORALL*--
--- This, like negation, is just an abbreviation, not a datatype.
-macro (priority := high) "∀ " x:ident " : " t:term ", " b:term : term =>
-  `(($x : $t) → $b)  -- This symbol can be made with \forall or \all
+-- '∀' is not a new idea: "for all n, P n" is exactly the function type (n : N) → P n.
+-- Hence the symbol ∀ is just "syntactic sugar":
+#check (n : N) → Even (double n)
 
--- We can rewrite the double even function using this:
-theorem double_even' : ∀ n : N , Even (double n):=
+-- So double_even was already a ∀-statement, we just did not call it one:
+theorem double_even' : (n : N) → Even (double n) :=
   fun n => double_even n
 
 --*EXISTS*--
--- A proof of ∃ x, P x is a pair: a witness w and a proof of P w
-inductive Exists {α : Type} (P : α → Prop) : Prop where
-  | intro (w : α) (h : P w) : Exists P
-macro (priority := high) "∃ " x:ident " : " t:term ", " b:term : term =>
-`(Exists (fun ($x : $t) => $b))  -- This symbol can be made with \exists
+-- A proof of "there is an x with P x" is a pair: a witness w, and a proof of P w.
+-- Its definition reads:
+inductive Exists' {α : Type} (P : α → Prop) : Prop where
+  | intro (w : α) (h : P w) : Exists' P
 
--- Here a trivial existence statement.
-theorem trivial : ∃ n : N , Even n :=
+#check ∃ n : N , Even n
+
+-- To prove it you must *hand over* the witness :
+theorem some_number_is_even : ∃ n : N , Even n :=
   Exists.intro zero base
+
+----------------------------------------------------------------------------------
+-- **Part 3e: Reading statements**
+----------------------------------------------------------------------------------
+
+-- *Translate the following theorem statements into mathematics:*
+
+theorem example_1 {n : N} (h : Even n) : ¬ Even (succ n) := _
+
+theorem example_2 : (n : N) → ∃ (m : N) , succ n = m := _
+
+theorem example_3 (n : N) : Even n ↔ ∃ (k : N) , double k = n := _
+
 
 end MyLogic

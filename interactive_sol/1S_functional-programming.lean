@@ -11,14 +11,14 @@ inductive N where
 
 -- **Click on the #-Keywords with the cursor, and look at the "Messages" tab in the InfoView on the right**
 
-#print N  -- #print shows all the properties that 'N' has
+#print N  -- #print shows the definition of 'N'
 
 open N  -- allows us to access 'N.zero' and 'N.succ' as 'zero' and 'succ'
 
 #check zero -- check shows the type of a term
 #check succ
 #check succ (succ zero)  -- function application is denoted with a space: f x, not f(x). It associates to the left
-#check N  -- 'Type' is the "type of small types", like 'Int', 'Bool', 'N', etc.
+#check N  -- 'Type' is the type of datatypes: 'Int', 'Bool' and 'N' all have type 'Type'
 
 -- **Define a function which adds two to a number**
 def add2 : N → N :=
@@ -41,7 +41,7 @@ def add2' (n : N) : N :=
 def double (n : N) : N :=
   match n with
   | zero => zero
-  | succ n' => add2 (double n')
+  | succ n' => succ (succ (double n'))
 
 #check (double)
 #reduce double (succ (succ zero))

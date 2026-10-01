@@ -17,25 +17,29 @@ inductive Equal {A : Type} : A → A → Prop where
 infix:50 (priority := high) " = " => Equal  -- this overrides Lean's own '='
 open Equal
 
--- Matching on a proof of 'n = m' is what makes equality useful: 'refl' is the
--- only way such a proof can have been built, so the compiler learns n and m are
--- the same term, and the goal becomes something refl can close.
+-- Matching on a proof of 'n = m' is what makes equality useful:
+-- 'refl' is the only way such a proof can have been built, so the compiler learns n and m are the same
 
 -- Equality is reflexive
-theorem reflexive {n : N} : n = n :=
-  refl n
+theorem reflexive {A : Type} {a : A} : a = a :=
+  refl a
 
 -- Equality is symmetric
-theorem symmetric {n m : N} : n = m → m = n :=
-  fun h => match h with | refl _ => refl _
+theorem symmetric {A : Type} {a b : A} : a = b → b = a :=
+  fun h => match h with
+  | refl _ => refl _
 
 -- Equality is transitive
-theorem transitive {n m k : N} : n = m → m = k → n = k :=
-  fun h1 h2 => match h1, h2 with | refl _, refl _ => refl _
+theorem transitive {A : Type} {a b c : A} : a = b → b = c → a = c :=
+  fun h1 h2 =>
+  match h1, h2 with
+  | refl _, refl _ => refl _
 
 -- The succ function preserves equality
 theorem succ_equal {n m : N} : n = m → succ n = succ m :=
-  fun h => match h with | refl _ => refl _
+  fun h =>
+  match h with
+  | refl _ => refl _
 
 ----------------------------------------------------------------------------------
 -- **Part 4b: Addition**
@@ -46,26 +50,30 @@ def add (n m : N) : N :=
   match n with
   | zero => m
   | succ n' => succ (add n' m)
-infix:65 (priority := high) " + " => add
+infix:65 (priority := high) " + " => add  -- this overrides Lean's own '+'
 
 
--- **show that (N, +) forms a Monoid**
+-- **(N, +, zero) is a commutative monoid. Your job is to say that in Lean.**
 
--- hint: substitute the definition of '+'.
+-- Here is the first of the four statements.
 theorem left_unit (n : N) : zero + n = n :=
   _
 
--- hint: you need to match here
-theorem right_unit (n : N) : n + zero = n :=
-  _
+-- Now write the other three yourself, below.
+-- *Write only the statement*, and leave the proof as '_'.
 
-theorem associative (n m k : N) : (n + m) + k = n + (m + k) :=
-  _
+-- 'zero' is also a right unit of '+'
+-- theorem right_unit ...
 
--- If you are done already, you can try this difficult problem:
+-- '+' is associative
+-- theorem associative ...
 
-theorem commutative (n m : N) : n + m = m + n :=
-  _
+-- '+' is commutative
+-- theorem commutative ...
 
--- Hint 1: You need to define a helper-theorem to solve this one
--- Hint 2: Write down the proof strategy on a piece of paper first
+
+-- **Done early? Go back and replace each '_' with a proof.**
+-- hint 1: 'left_unit' needs no recursion. The others do, so you have to 'match'.
+-- hint 2: which argument does '+' recurse on? That is the one to match on.
+-- hint 3: substitute the definition of '+' in your head or on a piece of paper, this makes the targer clearer.
+-- hint 4: commutativity needs a helper theorem of its own. Write the proof strategy down on paper first.

@@ -15,18 +15,21 @@ def double (n : N) : N :=
 ----------------------------------------------------------------------------------
 
 -- Given a Type T, Lst T returns a Type of Lists over T
-inductive Lst : Type → Type                -- Lst is a *function of types*
-  | nil {T} : Lst T                        -- 'T' is an *implicit argument*, it is inferred by the compiler
-  | cons {T} : T → Lst T → Lst T
+inductive Lst (T : Type) : Type
+  | nil : Lst T                            -- in the constructors T is *implicit*: the compiler infers it
+  | cons : T → Lst T → Lst T
 open Lst
 infixr:20 (priority := high) " ∷ " => cons  -- An infix operator to abbreviate "cons". Made with "\::"
+
+#check (Lst)  -- Lst is a function of types
+-- T is a parameter: it is fixed for the whole type. Hence we call Lst a *parametric Type*
 
 -- Notice: The Lean Compiler can infer the implicit type T!
 #check zero ∷ succ zero ∷ nil -- A list of natural numbers
 #check (zero ∷ succ zero ∷ nil) ∷ (nil) ∷ nil -- A list of lists
 
 -- *Define a function which concatenates two lists together*
-def concatenate {T : Type} (xs : Lst T) (ys : Lst T) : Lst T := -- T is an implicit argument
+def concatenate {T : Type} (xs : Lst T) (ys : Lst T) : Lst T := -- T is given as an implicit argument
   match xs with
   | nil => _
   | x ∷ xs' => _
@@ -37,11 +40,15 @@ def concatenate {T : Type} (xs : Lst T) (ys : Lst T) : Lst T := -- T is an impli
 -- **Part 2b: Even Numbers**
 ----------------------------------------------------------------------------------
 
--- Even is similar to Lst, but instead of a type, it now *depends on a value instead of a Type*
+-- Given a natural number n, Even n returns a type which contains an element if and only if n is even
 inductive Even : N → Type where
   | base : Even zero                              -- zero is an even number
   | next {n : N} : Even n → Even (succ (succ n))  -- if n is even, so is n+2
 open Even
+
+#check (Even)  -- Even also is a function of types
+-- However, in contrast to Lst, n changes between the constructors!
+-- Even is a proper *dependent Type*
 
 -- *Can you supply an element of this Type?*
 def zero_even : Even zero :=
