@@ -7,7 +7,7 @@ set_option pp.fieldNotation false
 variable {G : Type}  -- We declare G as a Type here, so we don't have to do it everywhere
 
 class Mult (G) where
-  mult : G -> G -> G
+  mult : G → G → G
 infixl:70 (priority := high) " * " => Mult.mult
 
 class AssocMult (G) extends Mult (G) where
@@ -19,16 +19,17 @@ class Neutral (G) where
   one : G
 notation:max "e" => Neutral.one
 
+section LeftGroupOnly  -- keeps the ⁻¹ below from clashing with Group's further down
 class LeftGroup (G) extends AssocMult G, Neutral G where
   left_unit {g : G} : e * g = g
-  inv     : G -> G
+  inv     : G → G
   left_inv {g : G} : inv g * g = e
-postfix:max "⁻¹" => LeftGroup.inv
+local postfix:max "⁻¹" => LeftGroup.inv
 
 class Group (G) extends AssocMult G, Neutral G where
   left_unit {g : G} : e * g = g
   right_unit {g : G} : g * e = g
-  inv     : G -> G
+  inv     : G → G
   left_inv {g : G} : inv g * g = e
   right_inv {g : G} : g * inv g = e
 postfix:max "⁻¹" => Group.inv
@@ -51,6 +52,8 @@ theorem LG_right_unit [LeftGroup G] {g : G} : g * e = g := by
   _     = (g * g⁻¹) * g := by simp
   _     = e * g         := by rw [LG_right_inv]
   _     = g             := by rw [LeftGroup.left_unit]
+
+end LeftGroupOnly
 
 -- Every Left-Group is a group!
 instance leftGroupIsGroup [LeftGroup G] : Group G where
@@ -81,7 +84,7 @@ theorem double_inverse [Group G] {g : G} : g⁻¹⁻¹ = g := by
   have h : g⁻¹ * g = e := Group.left_inv
   exact (right_inverse_unique (g⁻¹) h).symm
 
-theorem inversion_group_abelian [Group G] (h : (g : G) -> g * g = e) : ∀ g h' : G , g * h' = h' * g := by
+theorem inversion_group_abelian [Group G] (h : (g : G) → g * g = e) : ∀ g h' : G , g * h' = h' * g := by
   intro g h'
   calc
   g * h' = (g * h') * e                     := (Group.right_unit).symm

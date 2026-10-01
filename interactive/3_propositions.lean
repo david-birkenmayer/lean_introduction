@@ -3,7 +3,7 @@ namespace MyLogic -- A namespace so the standard functions can be overwritten
 
 inductive N where
   | zero : N
-  | succ : N -> N
+  | succ : N → N
 open N
 
 def double (n : N) : N :=
@@ -11,21 +11,21 @@ def double (n : N) : N :=
   | zero => zero
   | succ n' => succ (succ (double n'))
 
-inductive Even : N -> Prop where
+inductive Even : N → Prop where
   | base : Even zero
   | next {n : N} : Even n → Even (succ (succ n))
 open Even
 
 ----------------------------------------------------------------------------------
--- **Part 2a: The Prop Type**
+-- **Part 3a: The Prop Type**
 ----------------------------------------------------------------------------------
 
--- Lean seperates propositions into the 'Prop' Type, which contains True and False
+-- Lean separates propositions into the 'Prop' Type. Its simplest inhabitants are:
 
 inductive True : Prop where  -- True has one element
   | intro : True
 
-inductive False : Prop where  -- False has no elements
+inductive False : Prop where  -- False has no elements (since it cannot be proven)
 
 -- When defining functions with output type 'Prop', we write *theorem* instead of 'def'
 theorem double_even (n : N) : Even (double n) :=
@@ -33,12 +33,14 @@ theorem double_even (n : N) : Even (double n) :=
   | zero => base
   | succ n' => next (double_even n')
 
+#reduce double_even (succ (succ zero))  -- Term doesn't unfold like before! Reason: Proof irrelevance
+
 ----------------------------------------------------------------------------------
--- **Part 2b: Negation**
+-- **Part 3b: Negation**
 ----------------------------------------------------------------------------------
 
 -- We use that ¬ A is the same as A → False
--- Hence, negation just an abbreviation
+-- Hence, negation is just an abbreviation
 def Not (P : Prop) : Prop := P → False
 notation:max (priority := high) "¬" p:40 => Not p  -- This symbol can be made with \neg
 
@@ -60,7 +62,7 @@ theorem succ_even_is_not_even {n : N} (h : Even n) : ¬ Even (succ n) :=
 -- The compiler rules out the other cases.
 
 ----------------------------------------------------------------------------------
--- **Part 2c: Logical connectives**
+-- **Part 3c: Logical connectives**
 ----------------------------------------------------------------------------------
 
 --*AND*--
@@ -79,24 +81,24 @@ infixr:30 (priority := high) " ∨ " => Or  -- This symbol can be made with \or
 --*IFF*--
 -- A proof of P ↔ Q is a pair of functions, one in each direction
 inductive Iff (P Q : Prop) : Prop where  -- This symbol can be made with \iff
-  | intro (mp : P -> Q) (mpr : Q -> P) : Iff P Q
+  | intro (mp : P → Q) (mpr : Q → P) : Iff P Q
 infix:20 (priority := high) " ↔ " => Iff
 
 -- I let the RPTU LLM generate this proof for me!
-theorem and_assumption {P Q R : Prop} (h : (P → R) ∨ (Q → R)) : (P ∧ Q) -> R :=
+theorem and_assumption {P Q R : Prop} (h : (P → R) ∨ (Q → R)) : (P ∧ Q) → R :=
   fun pq =>
   match h, pq with
   | Or.inl f, And.intro p _ => f p
   | Or.inr g, And.intro _ q => g q
 
 ----------------------------------------------------------------------------------
--- **Part 2c: Quantifiers**
+-- **Part 3d: Quantifiers**
 ----------------------------------------------------------------------------------
 
 --*FORALL*--
 -- This, like negation, is just an abbreviation, not a datatype.
 macro (priority := high) "∀ " x:ident " : " t:term ", " b:term : term =>
-  `(($x : $t) -> $b)  -- This symbol can be made with \forall or \all
+  `(($x : $t) → $b)  -- This symbol can be made with \forall or \all
 
 -- We can rewrite the double even function using this:
 theorem double_even' : ∀ n : N , Even (double n):=
@@ -104,7 +106,7 @@ theorem double_even' : ∀ n : N , Even (double n):=
 
 --*EXISTS*--
 -- A proof of ∃ x, P x is a pair: a witness w and a proof of P w
-inductive Exists {α : Type} (P : α -> Prop) : Prop where
+inductive Exists {α : Type} (P : α → Prop) : Prop where
   | intro (w : α) (h : P w) : Exists P
 macro (priority := high) "∃ " x:ident " : " t:term ", " b:term : term =>
 `(Exists (fun ($x : $t) => $b))  -- This symbol can be made with \exists

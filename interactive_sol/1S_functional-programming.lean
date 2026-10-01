@@ -11,7 +11,7 @@ inductive N where
 
 -- **Click on the #-Keywords with the cursor, and look at the "Messages" tab in the InfoView on the right**
 
-#print N  -- *#print shows all the properties that 'N' has
+#print N  -- #print shows all the properties that 'N' has
 
 open N  -- allows us to access 'N.zero' and 'N.succ' as 'zero' and 'succ'
 

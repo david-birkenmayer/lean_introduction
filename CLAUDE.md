@@ -19,8 +19,8 @@ not in a local checkout.
 
 | Path | What it is |
 | --- | --- |
-| `interactive/part{1..4}_*.lean` | **The current exercise files.** One per stage, handed out in order. |
-| `interactive_sol/part{1..4}_*.lean` | The filled-in twin of each `interactive/` file — same text, holes filled. Keep them diff-identical apart from the hole lines. |
+| `interactive/{1..5}_*.lean` | **The current exercise files.** One per stage, handed out in order. Parts 1, 2, 4 carry `_` exercises; parts 3 and 5 are walkthroughs the presenter narrates (no exercises, no solution file). |
+| `interactive_sol/{1S,2S,4S}_*.lean` | The filled-in twin of each exercise file — same text, holes filled. Keep them diff-identical apart from the hole lines. Only parts 1, 2, 4 have one. |
 | `interactive.lean`, `interactive_solutions.lean` | The **original single-file version**, superseded by `interactive/`. Kept as reference — `interactive_solutions.lean` is the only place where *all* proofs (incl. `commutative`) are actually solved. |
 | `presentation/main.typ` | The slide deck (Typst + Touying). Still largely a skeleton with `*blah:*` placeholders. |
 | `presentation/university.typ`, `template.typ` | RPTU-branded Touying theme by Fabian von der Warth; `template.typ` is his original deck kept as a usage example. Treat both as vendored — edit `main.typ`. |
@@ -43,7 +43,8 @@ with `commutative` as the "final boss"**.
   A file with unsolved exercises is *supposed* to show errors.
 - Say **term**, never "expression" — Lean's own name for this style is
   *term mode*, and the course teaches it by that name.
-- ASCII arrows `->`, not `→`. `succ (succ zero)`, not numerals.
+- Unicode arrows `→`, not `->` (unified 2026-10-01; the audience is
+  mathematicians). `succ (succ zero)`, not numerals.
 - `set_option pp.fieldNotation false` at the top of every file, so the Infoview
   prints `succ (succ zero)` instead of `zero.succ.succ`.
 - Custom notation: `infix:20 (priority := high) " ≡ " => NEqual`,
@@ -60,15 +61,19 @@ with `commutative` as the "final boss"**.
 Worth confirming with the user before "fixing" any of these — several are just
 mid-migration:
 
-- `interactive_sol/` is **untracked**, and git still has `solutions/` staged as
-  deleted (that directory was renamed). Uncommitted.
-- **`interactive_sol/` is stale for parts 2–4.** `part1` is a true twin of its
-  exercise file (verified: 0 errors, diff is only the hole lines). `part2`,
-  `part3` and `part4` are still copies of the old monolithic `interactive.lean`
-  cut at successive points — each solves the *previous* part and leaves its own
-  part as `_`, so they are extra exercise files, not solutions.
-- `interactive/part4_addition.lean` has a header typo: `Part 3: Addition`.
-- `main.typ` slides 2–4 end in `*blah:*` placeholder overlays.
+- All five exercise files and all three solution files verified clean
+  (2026-10-01): exercise files error *only* on their `_` holes (5 / 6 / 4),
+  solution files have 0 errors, and each solution diffs against its exercise
+  only on hole lines.
+- Part 4 now **defines equality from scratch** as `inductive Equal`, overriding
+  Lean's `=` with a high-priority `infix`. It no longer uses `rfl`, `Eq.symm`,
+  `Eq.trans` or `congrArg`. `#print axioms commutative` reports no axioms.
+- Part 5's `LeftGroup` block sits in `section LeftGroupOnly` with a `local`
+  `⁻¹` notation. **Do not un-scope it:** `Group` declares `⁻¹` too, and once
+  `leftGroupIsGroup` exists every `LeftGroup` is a `Group`, so an unscoped
+  notation makes `g⁻¹` ambiguous with a useless error that lists two
+  identical-looking interpretations.
+- `main.typ` later slides still end in `*blah:*` placeholder overlays.
 
 ## Building
 

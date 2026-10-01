@@ -37,8 +37,8 @@ def concatenate {T : Type} (xs : Lst T) (ys : Lst T) : Lst T := -- T is an impli
 -- **Part 2b: Even Numbers**
 ----------------------------------------------------------------------------------
 
--- Even is simular to Lst, but instead of a type, it now *depends on a value instead of a Type*
-inductive Even : N -> Type where
+-- Even is similar to Lst, but instead of a type, it now *depends on a value instead of a Type*
+inductive Even : N → Type where
   | base : Even zero                              -- zero is an even number
   | next {n : N} : Even n → Even (succ (succ n))  -- if n is even, so is n+2
 open Even
@@ -57,3 +57,5 @@ def double_even (n : N) : Even (double n) :=
   | zero => _
   | succ n' => _
 -- hint: Substitute the definition of double
+
+#reduce double_even (succ (succ zero))
