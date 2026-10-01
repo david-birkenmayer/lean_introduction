@@ -1,7 +1,5 @@
 #import "university.typ": *
-// The Lean logo spelling: L∃∀N (quantifiers from the bundled math font, which has the glyphs).
-// "Latin Modern Sans 17" is the thin large-size cut, so the letters match the thin quantifiers.
-#let lean = box(text(font: "Latin Modern Sans 17")[L#text(font: "Latin Modern Math")[∃∀]N])
+#let lean = [Lean]
 #let ub = "ub"
 #let lb = "lb"
 #let subs = $subset.eq$
@@ -28,7 +26,7 @@
   affiliations: ("RPTU Kaiserslautern-Landau"),
   sponsor-logos: ("/logos/affiliations/RPTU_Minimal.svg"),
   config-info(
-    title: text(font: "Latin Modern Sans 17")[Introduction into \ #text(size: 2em, lean)],
+    title: [Introduction into \ #text(size: 2em, lean)],
     short-title: "Introduction into Lean",
     author: ("David A. Birkenmayer"),
     institution: "AG Optimierung, RPTU Kaiserslautern",
@@ -44,7 +42,7 @@
 #show emph: it => text(fill: red, style: "italic", it.body)
 
 
-== What is L$exists$$forall$N?
+== What is lean?
 
 #slide(repeat: 3, self => [
   #let (uncover, only) = utils.methods(self)
@@ -61,8 +59,6 @@
   #uncover("3-")[
     - a _theorem prover_
   ]
-
-
 ])
 
 
@@ -171,133 +167,3 @@ def total (xs : List Int) : Int :=
                           [a promise the compiler enforces]),
   ))
 ])
-
-== L$exists$$forall$N is statically typed
-
-#slide(repeat: 2, self => [
-  #let (uncover, only) = utils.methods(self)
-
-  #v(0.5em)
-  #uncover("1-")[
-    This is a second, independent axis: C is statically typed and imperative,
-    Python is dynamically typed and imperative.
-  ]
-
-  #v(0.6em)
-  #uncover("2-")[
-    Ordinary static type systems stop at "is a list".
-    Once a type can say "is a sorted list of length $n$", it can also say
-    _"is a proof that $n$ is even"_ --- and that is the rest of this talk.
-  ]
-
-])
-
-== L$exists$$forall$N is dependently typed
-
-#slide(repeat: 3, self => [
-  #let (uncover, only) = utils.methods(self)
-
-  #v(0.5em)
-  #uncover("1-")[
-    - every object has a type
-    - type-correctness is checked at compile-time
-    - _types are themselves values_ (types are first-class citizens)
-    - types can _depend_ on values
-    - types themselves can do computation
-    
-  ]
-  
-  #uncover("2-")[
-    *blah:* \
-  ]
-
-  #uncover("3-")[
-    *blah:* \
-  ]
-
-])
-
-== Lean is a theorem prover
-
-#slide(repeat: 3, self => [
-  #let (uncover, only) = utils.methods(self)
-
-  #v(0.5em)
-  #uncover("1-")[
-    - 
-    
-  ]
-  
-  #uncover("2-")[
-    *blah:* \
-  ]
-
-  #uncover("3-")[
-    *blah:* \
-  ]
-
-])
-
-
-#bibliography("refs.bib")
-
-== This is the end
-#v(10em)
-#set text(30pt)
-#align(center)[
-Thank you for your attention!
-]
-#set text(15pt)
-#align(center)[
-Shoutout to Fabian vdW for the Slide design
-]
-
-
-== Unsplit Slide
-
-#slide(repeat: 3, self => [
-  #let (uncover, only) = utils.methods(self)
-
-  #v(0.5em)
-  #uncover("1-")[
-    *blah:* 
-
-  ]
-  
-  #uncover("2-")[
-    *blah:* \
-  ]
-
-  #uncover("3-")[
-    *blah:* \
-  ]
-
-])
-
-
-
-== Split Slide
-
-#slide(repeat: 3, self => [
-  #let (uncover, only) = utils.methods(self)
-
-  #columns(2, gutter: 8pt)[
-  #v(0.5em)
-  #uncover("1-")[
-    *blah:* 
-  ]
-  
-  #uncover("2-")[
-    *blah:* \
-  ]
-
-
-  #colbreak()
-  #uncover("3-")[
-    *blah:* \
-  ]
-]
-
-])
-
-

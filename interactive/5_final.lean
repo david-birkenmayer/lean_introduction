@@ -1,5 +1,3 @@
-import Mathlib.Order.MinMax  -- from here on we use Lean's library, not our own definitions
-
 ----------------------------------------------------------------------------------
 -- **5a: Tactics**
 ----------------------------------------------------------------------------------
@@ -64,88 +62,122 @@ def unitInterval : Interval := { lo := 0, hi := 1, sound := by simp } -- structu
 -- **5d: Classes** -- a structure that Lean fills in for you
 ----------------------------------------------------------------------------------
 
--- To speak about "the smallest" we will need an order. We do not want to pass it
--- by hand every time, so we declare such things as a *class* and Lean supplies
--- them silently.
-class HasDefault (α : Type) where
-  default : α
+-- A *class* is a structure that Lean looks up for you, inferred from the type alone.
+-- In part 1 you wrote 'double' for N. Many types have something deserving of that name.
 
-instance : HasDefault Nat where default := 0
-instance : HasDefault Bool where default := false
+class Doubling (α : Type) where
+  double : α → α
 
-#eval (HasDefault.default : Nat)    -- Lean picks the Nat instance ...
-#eval (HasDefault.default : Bool)   -- ... and here the Bool one, from the type alone
+instance : Doubling Nat    where double n := n + n
+instance : Doubling String where double s := s ++ s
 
--- Square brackets ask for an instance. Compare with part 2's {implicit} arguments:
--- {x} is inferred from the other arguments, [x] is looked up in a table.
-def twiceDefault (α : Type) [HasDefault α] : α × α :=
-  (HasDefault.default, HasDefault.default)
+#eval Doubling.double 7       -- Lean picks the Nat instance ...
+#eval Doubling.double "ab"    -- ... and here the String one, from the type alone
 
-#eval twiceDefault Nat
+-- Square brackets ask for an instance.
+def quadruple (α : Type) [Doubling α] (a : α) : α :=
+  Doubling.double (Doubling.double a)
 
-----------------------------------------------------------------------------------
--- **5e: A verified optimiser**
-----------------------------------------------------------------------------------
+#eval quadruple Nat 3
+#eval quadruple String "ab"
 
--- The SPECIFICATION, as a structure. Read it as mathematics: "m is a minimum of l".
-structure IsMinOf [LE α] (m : α) (l : List α) : Prop where
-  mem    : m ∈ l
-  le_all : ∀ x ∈ l, m ≤ x
-
--- The ALGORITHM. It walks along the list carrying the best value seen so far,
--- so 'smallest best l' returns the smallest entry of the nonempty list best :: l.
-def smallest [LinearOrder α] : α → List α → α
-  | best, []      => best
-  | best, x :: xs => smallest (min best x) xs
-
-#eval smallest 7 [3, 9, 2, 8]   -- smallest of 7, 3, 9, 2, 8
-#eval smallest 1 [3, 9, 2, 8]   -- the starting value can win
-#eval smallest 7 []             -- a one-element list
-
--- The PROOF that the algorithm meets the specification.
-theorem smallest_le [LinearOrder α] (a : α) (l : List α) : smallest a l ≤ a := by
-  induction l generalizing a with
-  | nil => simp [smallest]
-  | cons x xs ih => exact le_trans (ih (min a x)) (min_le_left a x)
-
-theorem smallest_le_of_mem [LinearOrder α] (a : α) (l : List α) :
-    ∀ x ∈ l, smallest a l ≤ x := by
-  induction l generalizing a with
-  | nil => simp
-  | cons y ys ih =>
-    intro x hx
-    rcases List.mem_cons.mp hx with rfl | h
-    · exact le_trans (smallest_le (min a x) ys) (min_le_right a x)
-    · exact ih (min a y) x h
-
-theorem smallest_mem [LinearOrder α] (a : α) (l : List α) : smallest a l ∈ a :: l := by
-  induction l generalizing a with
-  | nil => simp [smallest]
-  | cons x xs ih =>
-
-    simp only [smallest]
-    rcases List.mem_cons.mp (ih (min a x)) with h | h
-    · rw [h]
-      rcases le_total a x with hax | hax
-      · simp [min_eq_left hax]
-      · simp [min_eq_right hax]
-    · simp [h]
-
--- Put together: for any type with an order, on any list, the answer is correct.
-theorem smallest_spec [LinearOrder α] (a : α) (l : List α) :
-    IsMinOf (smallest a l) (a :: l) where
-  mem    := smallest_mem a l
-  le_all := by
-    intro x hx
-    rcases List.mem_cons.mp hx with rfl | h
-    · exact smallest_le x l
-    · exact smallest_le_of_mem a l x h
-
--- This is the thing to take away: the program and the proof that it is correct
--- live in one language, and the compiler checks both at once.
 
 ----------------------------------------------------------------------------------
--- **5f: Material**
+-- **Part 5e: Groups**
+----------------------------------------------------------------------------------
+
+variable {G : Type}  -- We declare G as a Type here, so we don't have to do it everywhere
+
+class Mult (G) where
+  mult : G → G → G
+infixl:70 (priority := high) " * " => Mult.mult
+
+class AssocMult (G) extends Mult (G) where
+  assoc {g h c : G} : (g * h) * c = g * (h * c)
+
+attribute [simp] AssocMult.assoc -- the 'simp' tactic can now prove associativity for us
+
+class Neutral (G) where
+  one : G
+notation:max "e" => Neutral.one
+
+section LeftGroupOnly  -- keeps the ⁻¹ below from clashing with Group's further down
+class LeftGroup (G) extends AssocMult G, Neutral G where
+  left_unit {g : G} : e * g = g
+  inv     : G → G
+  left_inv {g : G} : inv g * g = e
+local postfix:max "⁻¹" => LeftGroup.inv
+
+class Group (G) extends AssocMult G, Neutral G where
+  left_unit {g : G} : e * g = g
+  right_unit {g : G} : g * e = g
+  inv     : G → G
+  left_inv {g : G} : inv g * g = e
+  right_inv {g : G} : g * inv g = e
+postfix:max "⁻¹" => Group.inv
+
+-- We show that every left Group is actually already a Group
+
+theorem LG_right_inv [LeftGroup G] {g : G} : g * g⁻¹ = e := by
+  calc
+  g * g⁻¹ = e * (g * g⁻¹)             := by rw [LeftGroup.left_unit]
+  _       = (g⁻¹⁻¹ * g⁻¹) * (g * g⁻¹) := by rw [LeftGroup.left_inv]
+  _       = g⁻¹⁻¹ * (g⁻¹ * g) * g⁻¹   := by simp
+  _       = g⁻¹⁻¹ * e * g⁻¹           := by rw [LeftGroup.left_inv]
+  _       = g⁻¹⁻¹ * (e * g⁻¹)         := by simp
+  _       = g⁻¹⁻¹ * g⁻¹               := by rw [LeftGroup.left_unit]
+  _       = e                         := by rw [LeftGroup.left_inv]
+
+theorem LG_right_unit [LeftGroup G] {g : G} : g * e = g := by
+  calc
+  g * e = g * (g⁻¹ * g) := by rw [LeftGroup.left_inv]
+  _     = (g * g⁻¹) * g := by simp
+  _     = e * g         := by rw [LG_right_inv]
+  _     = g             := by rw [LeftGroup.left_unit]
+
+end LeftGroupOnly
+
+-- Every Left-Group is a group!
+instance leftGroupIsGroup [LeftGroup G] : Group G where
+  left_unit   := LeftGroup.left_unit
+  right_unit  := LG_right_unit
+  inv         := LeftGroup.inv
+  left_inv    := LeftGroup.left_inv
+  right_inv   := LG_right_inv
+
+theorem one_unique [Group G] (e' : G) (f : ∀ h : G , e' * h = h) : e' = e := by
+  calc
+  e' = e' * e := Group.right_unit.symm
+  _  = e      := f e
+
+theorem left_cancel [Group G] {g h c : G} (f : c * g = c * h) : g = h := by
+  calc
+  g = (c⁻¹ * c) * g   := by rw [Group.left_inv, Group.left_unit]
+  _ = c⁻¹ * (c * g)   := by simp
+  _ = c⁻¹ * (c * h)   := by rw [f]
+  _ = (c⁻¹ * c) * h   := by simp
+  _ = h               := by rw [Group.left_inv, Group.left_unit]
+
+theorem right_inverse_unique [Group G] (g : G) {g' : G} (h : g * g' = e) : g' = g⁻¹ := by
+  rw [← Group.right_inv] at h
+  exact (left_cancel h)
+
+theorem double_inverse [Group G] {g : G} : g⁻¹⁻¹ = g := by
+  have h : g⁻¹ * g = e := Group.left_inv
+  exact (right_inverse_unique (g⁻¹) h).symm
+
+theorem inversion_group_abelian [Group G] (h : (g : G) → g * g = e) : ∀ g h' : G , g * h' = h' * g := by
+  intro g h'
+  calc
+  g * h' = (g * h') * e                     := (Group.right_unit).symm
+  _      = (g * h') * ((h' * g) * (h' * g)) := by rw[h]
+  _      = g * (h' * h') * g * h' * g       := by simp
+  _      = (g * g) * h' * g                 := by rw[h, Group.right_unit]
+  _      = h' * g                           := by rw[h, Group.left_unit]
+
+
+----------------------------------------------------------------------------------
+-- **5f: Material, and also my sources**
 ----------------------------------------------------------------------------------
 
 -- * Lean Game Server: Learn Tactics Playfully -- https://adam.math.hhu.de/
