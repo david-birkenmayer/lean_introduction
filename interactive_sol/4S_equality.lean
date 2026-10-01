@@ -9,7 +9,7 @@ open N
 -- **Part 3a: Equality**
 ----------------------------------------------------------------------------------
 
--- The definition of equality would be out of scope for an introduction.
+-- The precise definition of equality is out of scope for an introduction.
 -- However, assume the following properties as given:
 
 -- Equality is reflexive
@@ -42,7 +42,7 @@ infix:65 (priority := high) " + " => add
 
 -- **show that (N, +) forms a Monoid**
 
--- hint: Substitute the definition of "+"
+-- hint: substitute the definition of '+'.
 theorem left_unit (n : N) : zero + n = n :=
   reflexive
 
@@ -51,13 +51,23 @@ theorem right_unit (n : N) : n + zero = n :=
   | zero => reflexive
   | succ n' => succ_equal (right_unit n')
 
-theorem associativity (n m k : N) : (n + m) + k = n + (m + k) :=
+theorem associative (n m k : N) : (n + m) + k = n + (m + k) :=
   match n with
   | zero => reflexive
-  | succ n' => succ_equal (associativity n' m k)
+  | succ n' => succ_equal (associative n' m k)
 
 
 -- If you are done already, you can try this difficult problem:
 
-theorem commutative (n m : N) : n + m = m + n :=  -- Hint: You need to define a helper-theorem to solve this one
+theorem helper (n m : N) : succ (n + m) = n + succ m :=
   match n with
+  | zero => succ_equal (left_unit m)
+  | succ n' => succ_equal (helper n' m)
+
+theorem commutative (n m : N) : n + m = m + n :=
+  match n with
+  | zero => symmetric (right_unit m)
+  | succ n' => transitive (succ_equal (commutative n' m)) (helper m n')
+
+-- Hint 1: You need to define a helper-theorem to solve this one
+-- Hint 2: Write down the proof strategy on a piece of paper first

@@ -22,7 +22,7 @@ open N  -- allows us to access 'N.zero' and 'N.succ' as 'zero' and 'succ'
 
 -- **Define a function which adds two to a number**
 def add2 : N → N :=
-  fun n => _
+  fun n => succ (succ n)
 
 #check add2
 #check add2 (succ zero)
@@ -30,7 +30,7 @@ def add2 : N → N :=
 
 -- We can declare n in the function signature so we don't have to use the "fun" keyword
 def add2' (n : N) : N :=
-  _
+  succ (succ n)
 
 #check (add2')
 #check add2'  -- without brackets, Lean will show n explicitly. This will be important later.
@@ -40,8 +40,8 @@ def add2' (n : N) : N :=
 -- A natural number is, by definition, either zero or the successor of another natural number n'
 def double (n : N) : N :=
   match n with
-  | zero => _
-  | succ n' => _
+  | zero => zero
+  | succ n' => add2 (double n')
 
 #check (double)
 #reduce double (succ (succ zero))
@@ -50,7 +50,7 @@ def double (n : N) : N :=
 -- Functions are values: they can be passed to other functions
 -- **Define "twice", which applies f two times to n**
 def twice (f : N → N) (n : N) : N :=
-  _
+  f (f n)
 
 #check (twice)
 

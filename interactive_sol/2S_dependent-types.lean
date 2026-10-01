@@ -28,8 +28,8 @@ infixr:20 (priority := high) " ∷ " => cons  -- An infix operator to abbreviate
 -- *Define a function which concatenates two lists together*
 def concatenate {T : Type} (xs : Lst T) (ys : Lst T) : Lst T := -- T is an implicit argument
   match xs with
-  | nil => _
-  | x ∷ xs' => _
+  | nil => ys
+  | x ∷ xs' => x ∷ concatenate xs' ys
 
 #reduce concatenate (succ (succ zero) ∷ succ zero ∷ nil) (zero ∷ succ zero ∷ nil)
 
@@ -45,15 +45,15 @@ open Even
 
 -- *Can you supply an element of this Type?*
 def zero_even : Even zero :=
-  _
+  base
 
 -- *Can you supply an element of this Type?*
 def two_even : Even (succ (succ zero)) :=
-  _
+  next base
 
 -- *Can you supply a function of this type?*
 def double_even (n : N) : Even (double n) :=
   match n with
-  | zero => _
-  | succ n' => _
+  | zero => base
+  | succ n' => next (double_even n')
 -- hint: Substitute the definition of double
